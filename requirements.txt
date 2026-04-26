@@ -6,4 +6,5 @@ psutil==6.1.1
 chromadb==0.5.23
 pydantic==2.10.6
 python-multipart==0.0.20
-graphlib-backport==1.1.0   # for Python <3.9 (optional)
+graphlib-backport==1.1.0
+aiohttp==3.11.11
