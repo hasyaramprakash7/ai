@@ -1,2 +1,6 @@
 visva_enterprise.key
 *.key
+
+*.sqlite3
+.env
+node_modules/

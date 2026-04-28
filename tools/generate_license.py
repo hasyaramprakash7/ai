@@ -1,13 +1,10 @@
+#!/usr/bin/env python3
 import json
 import hashlib
 import os
 from datetime import datetime, timedelta
 
-# ==========================================
-# 🔐 VISVA DATA - MASTER KEY GENERATOR
-# ==========================================
-
-MASTER_SECRET_SALT = "VISVA_SECRET_SALT" 
+MASTER_SECRET_SALT = "VISVA_SECRET_SALT"
 
 def generate_enterprise_key():
     print("=== 💎 VISVA DATA ENTERPRISE KEYGEN ===")
@@ -16,7 +13,6 @@ def generate_enterprise_key():
     days_valid = int(input("Enter License Validity in Days (e.g., 365): "))
     
     expiry_date = (datetime.now() + timedelta(days=days_valid)).strftime('%Y-%m-%d')
-    
     raw_string = f"{client_id}:{expiry_date}:{MASTER_SECRET_SALT}"
     digital_signature = hashlib.sha256(raw_string.encode()).hexdigest()
     
@@ -28,20 +24,23 @@ def generate_enterprise_key():
         "warning": "DO NOT MODIFY THIS FILE. TAMPERING WILL LOCK THE NEURAL ENGINE."
     }
     
-    # CRITICAL FIX: Creates a dedicated deployment folder automatically
     folder_name = f"Deploy_{client_id}"
     os.makedirs(folder_name, exist_ok=True)
     
-    # Saves exactly as 'visva_enterprise.key' so Compose finds it instantly
-    filepath = os.path.join(folder_name, "visva_enterprise.key")
-    with open(filepath, 'w') as f:
+    key_filepath = os.path.join(folder_name, "visva_enterprise.key")
+    with open(key_filepath, 'w') as f:
         json.dump(key_data, f, indent=4)
-        
+    
+    env_path = ".env"
+    env_content = f"VISVA_API_KEY={digital_signature}\n"
+    with open(env_path, "w") as f:
+        f.write(env_content)
+    
     print(f"\n✅ SUCCESS: Enterprise License Key Generated!")
-    print(f"📁 Saved in folder: {folder_name}/")
-    print(f"🔑 File name: visva_enterprise.key")
+    print(f"📁 License file: {folder_name}/visva_enterprise.key")
+    print(f"📁 Environment file: .env (overwritten with VISVA_API_KEY)")
     print(f"⏳ Expires on: {expiry_date}")
-    print("\n📦 NEXT STEP: Put your 'docker-compose.yml' in that folder, Zip it, and send to client.")
+    print("\n📦 Place the .key file in the project root and run 'docker-compose up'.")
 
 if __name__ == "__main__":
     generate_enterprise_key()
